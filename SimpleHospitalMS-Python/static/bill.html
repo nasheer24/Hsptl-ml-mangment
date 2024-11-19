@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Bill</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .bill-header {
+            margin-bottom: 30px;
+        }
+        .bill-details {
+            margin-bottom: 20px;
+        }
+        .bill-footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .print-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bill-header text-center">
+            <h1>Appointment Bill</h1>
+            <p><strong>Simple Hospital Management System</strong></p>
+        </div>
+        <div class="bill-details">
+            <p><strong>Patient Name:</strong> <span id="patient_name"></span></p>
+            <p><strong>Doctor Name:</strong> <span id="doctor_name"></span></p>
+            <p><strong>Appointment Date:</strong> <span id="appointment_date"></span></p>
+            <p><strong>Bill Amount:</strong> <span id="bill_amount"></span></p>
+        </div>
+        <div class="bill-footer">
+            <button class="btn btn-primary print-button" onclick="window.print()">Print Bill</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the appointment ID from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const appId = urlParams.get('id');
+
+            // Fetch the bill details from the server
+            fetch(`/appointment/bill/${appId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.querySelector('.container').innerHTML = `<p class="text-danger">${data.error}</p>`;
+                    } else {
+                        // Populate the bill details
+                        document.getElementById('patient_name').textContent = data.patient_name;
+                        document.getElementById('doctor_name').textContent = data.doctor_name;
+                        document.getElementById('appointment_date').textContent = data.appointment_date;
+                        document.getElementById('bill_amount').textContent = data.bill_amount;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching bill details:', error);
+                });
+        });
+    </script>
+</body>
+</html>
